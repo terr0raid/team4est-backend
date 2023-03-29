@@ -1,0 +1,19 @@
+eureka:
+  instance:
+    prefer-ip-address: 'true'
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: '8080'
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    allow-bean-definition-overriding: 'true'
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lower-case-service-id: 'true'

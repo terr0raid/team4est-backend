@@ -1,6 +1,6 @@
 spring:
   application:
-    name: api-gateway
+    name: category-service
   config:
     import: 'configserver:'
   cloud:
