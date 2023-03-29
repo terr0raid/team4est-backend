@@ -69,16 +69,16 @@ public class AuthenticationService implements IAuthenticationService {
       throw new BadCreadentialsException("Email or username is required");
     }
 
-    // try {
-    //   authenticationManager.authenticate(
-    //     new UsernamePasswordAuthenticationToken(
-    //       request.getUsername(),
-    //       request.getPassword()
-    //     )
-    //   );
-    // } catch (Exception e) {
-    //   throw new BadCreadentialsException("Invalid username or password");
-    // }
+    try {
+      authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+          request.getUsername(),
+          request.getPassword()
+        )
+      );
+    } catch (Exception e) {
+      throw new BadCreadentialsException("Invalid username or password");
+    }
 
     User user = userRepository
       .findByUsernameOrEmail(request.getUsername(), request.getEmail())
