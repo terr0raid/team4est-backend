@@ -33,18 +33,19 @@ public class AuthenticationFilter
       (exchange, chain) -> {
         ServerHttpRequest request = exchange.getRequest();
         if (routerValidator.isSecured.test(request)) {
-          if (this.isAuthMissing(request)) return onError(
+          if (isAuthMissing(request)) return onError(
             exchange,
             "Authorization header is missing in request",
             HttpStatus.UNAUTHORIZED
           );
-          final String token = this.getAuthHeader(request);
+          final String token = getAuthHeader(request);
+
           if (jwtUtil.isInvalid(token)) return onError(
             exchange,
             "Authorization header is invalid",
             HttpStatus.UNAUTHORIZED
           );
-          this.populateRequestWithHeaders(exchange, token);
+          populateRequestWithHeaders(exchange, token);
         }
         return chain.filter(exchange);
       }
@@ -64,7 +65,8 @@ public class AuthenticationFilter
   }
 
   private String getAuthHeader(ServerHttpRequest request) {
-    return request.getHeaders().getOrEmpty("Authorization").get(0);
+    String authHeader = request.getHeaders().getOrEmpty("Authorization").get(0);
+    return authHeader.replace("Bearer ", "").trim();
   }
 
   private boolean isAuthMissing(ServerHttpRequest request) {
@@ -80,7 +82,7 @@ public class AuthenticationFilter
       .getRequest()
       .mutate()
       .header("id", String.valueOf(claims.get("id")))
-      .header("role", String.valueOf(claims.get("role")))
+      .header("roles", String.valueOf(claims.get("roles")))
       .build();
   }
 }
