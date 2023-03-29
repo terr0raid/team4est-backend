@@ -1,0 +1,26 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+spring:
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/auth-service
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: auth-service
+  autoconfigure:
+    exclude[0]: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: 'true'
+server:
+  port: '0'

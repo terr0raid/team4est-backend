@@ -19,12 +19,7 @@
         <module>auth-service</module>
         <module>category-service</module>
         <module>config-server</module>
-        <module>notification-service</module>
-        <module>participant-service</module>
         <module>project-service</module>
-        <module>user-service</module>
-        <module>team-service</module>
-        <module>message-broker-service</module>
         <module>auth-service</module>
     </modules>
 
@@ -45,6 +40,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
     </dependencies>
 

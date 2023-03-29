@@ -1,0 +1,14 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: 'true'
+spring:
+  application:
+    name: category-service
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/categories?authSource=admin
+server:
+  port: '0'
