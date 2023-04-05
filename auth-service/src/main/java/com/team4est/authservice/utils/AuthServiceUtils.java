@@ -5,8 +5,10 @@ import com.team4est.authservice.entity.ERole;
 import com.team4est.authservice.entity.Role;
 import com.team4est.authservice.entity.Token;
 import com.team4est.authservice.entity.User;
+import com.team4est.authservice.exception.exceptions.BadCreadentialsException;
 import com.team4est.authservice.repository.RoleRepository;
 import com.team4est.authservice.repository.TokenRepository;
+import com.team4est.authservice.repository.UserRepository;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class AuthServiceUtils {
 
   private final TokenRepository tokenRepository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final RoleRepository roleRepository;
 
@@ -99,6 +102,20 @@ public class AuthServiceUtils {
         }
       })
       .collect(Collectors.toSet());
+  }
+
+  public User authenticateUser(String username, String email, String password)
+    throws BadCreadentialsException {
+    User user = userRepository
+      .findByUsernameOrEmail(username, email)
+      .orElseThrow(() ->
+        new BadCreadentialsException("Username or email is incorrect")
+      );
+
+    if (
+      !passwordEncoder.matches(password, user.getPassword())
+    ) throw new BadCreadentialsException("Password is incorrect");
+    return user;
   }
 
   public Map<String, Object> userClaims(User user) {

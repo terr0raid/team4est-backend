@@ -1,21 +1,10 @@
 {
     "username":"test1",
-    "password": "1234",
+    "password": "123456",
     "email": "test1@gmail.com",
-    "lastname": "test1",
-    "name": "test1",
     "roles": [
         "ROLE_ADMIN",
         "ROLE_USER",
         "ROLE_MODERATOR"
     ]
-}
-
-
-{
-    "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siaWQiOjMsIm5hbWUiOiJST0xFX01PREVSQVRPUiIsImRlc2NyaXB0aW9uIjoiTU9ERVJBVE9SIFJPTEUifSx7ImlkIjoxLCJuYW1lIjoiUk9MRV9BRE1JTiIsImRlc2NyaXB0aW9uIjoiQURNSU4gUk9MRSJ9LHsiaWQiOjIsIm5hbWUiOiJST0xFX1VTRVIiLCJkZXNjcmlwdGlvbiI6IlVTRVIgUk9MRSJ9XSwiaWQiOjEsImVtYWlsIjoidGVzdDFAZ21haWwuY29tIiwidXNlcm5hbWUiOiJ0ZXN0MUBnbWFpbC5jb20iLCJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJpYXQiOjE2ODAwMDI0OTUsImV4cCI6MTY4MDAxMDE3NX0.3eTd0fJiDFuYU1i9LLMM9YznU8iA4QG8eoOD5qn5I2s",
-    "refreshToken": "1debc5e6-7e52-4c8f-b85c-f72ee36da0bd",
-    "tokenType": "BEARER",
-    "expiresIn": 3600,
-    "expiresAt": null
 }

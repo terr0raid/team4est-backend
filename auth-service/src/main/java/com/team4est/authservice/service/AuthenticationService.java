@@ -9,15 +9,12 @@ import com.team4est.authservice.dto.UserRegisterRequest;
 import com.team4est.authservice.dto.UserRegisterResponse;
 import com.team4est.authservice.entity.EToken;
 import com.team4est.authservice.entity.User;
+import com.team4est.authservice.exception.exceptions.AlreadyExistsException;
 import com.team4est.authservice.exception.exceptions.BadCreadentialsException;
-import com.team4est.authservice.exception.exceptions.EmailExistsException;
 import com.team4est.authservice.exception.exceptions.EntityNotFoundException;
-import com.team4est.authservice.exception.exceptions.UsernameExistsException;
 import com.team4est.authservice.repository.UserRepository;
 import com.team4est.authservice.utils.AuthServiceUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +24,6 @@ public class AuthenticationService implements IAuthenticationService {
 
   private final UserRepository userRepository;
   private final JwtService jwtService;
-  private final AuthenticationManager authenticationManager;
   private final AuthServiceUtils authServiceUtils;
 
   @Transactional
@@ -36,53 +32,47 @@ public class AuthenticationService implements IAuthenticationService {
     User user = authServiceUtils.mapToUser(request);
 
     if (userRepository.existsByEmail(user.getEmail())) {
-      throw new EmailExistsException("Email already exists");
+      throw new AlreadyExistsException("Email already exists");
     }
     if (userRepository.existsByUsername(user.getUsername())) {
-      throw new UsernameExistsException("Username already exists");
+      throw new AlreadyExistsException("Username already exists");
     }
-    User savedUser = userRepository.save(user);
+    try {
+      User savedUser = userRepository.save(user);
+      String accessToken = jwtService.generateToken(
+        authServiceUtils.userClaims(savedUser),
+        user
+      );
+      String refreshToken = jwtService.generateRefreshToken();
 
-    String accessToken = jwtService.generateToken(
-      authServiceUtils.userClaims(savedUser),
-      user
-    );
-    String refreshToken = jwtService.generateRefreshToken();
+      authServiceUtils.saveUserToken(savedUser, accessToken, refreshToken);
 
-    authServiceUtils.saveUserToken(savedUser, accessToken, refreshToken);
-
-    return UserRegisterResponse
-      .builder()
-      .accessToken(accessToken)
-      .refreshToken(refreshToken)
-      .expiresIn(3600L)
-      .expiresAt(System.currentTimeMillis() + 3600L * 1000)
-      .tokenType(EToken.BEARER.name())
-      .build();
+      return UserRegisterResponse
+        .builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .expiresIn(3600L)
+        .expiresAt(System.currentTimeMillis() + 3600L * 1000)
+        .tokenType(EToken.BEARER.name())
+        .build();
+    } catch (Exception e) {
+      throw new BadCreadentialsException("Something went wrong");
+    }
   }
 
   @Transactional
   @Override
   public UserLoginResponse login(UserLoginRequest request)
-    throws EntityNotFoundException {
+    throws EntityNotFoundException, BadCreadentialsException {
     if (request.getEmail() == null && request.getUsername() == null) {
       throw new BadCreadentialsException("Email or username is required");
     }
 
-    try {
-      authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-          request.getUsername(),
-          request.getPassword()
-        )
-      );
-    } catch (Exception e) {
-      throw new BadCreadentialsException("Invalid username or password");
-    }
-
-    User user = userRepository
-      .findByUsernameOrEmail(request.getUsername(), request.getEmail())
-      .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    User user = authServiceUtils.authenticateUser(
+      request.getUsername(),
+      request.getEmail(),
+      request.getPassword()
+    );
 
     String accessToken = jwtService.generateToken(
       authServiceUtils.userClaims(user),

@@ -1,3 +1,15 @@
 package com.team4est.authservice.exception.model;
 
-public class ErrorResponse {}
+import java.util.Date;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class ErrorResponse {
+
+  private String message;
+  private int code;
+  private String path;
+  private Date timestamp;
+}
