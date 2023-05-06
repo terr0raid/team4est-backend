@@ -15,4 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/teams")
 @RequiredArgsConstructor
-public class TeamController {}
+public class TeamController {
+
+  @PostMapping
+  public ResponseEntity<TeamResponse> createTeam(
+    @RequestBody TeamRequest teamRequest
+  ) {
+    return null;
+  }
+
+  @GetMapping
+  public ResponseEntity<Page<TeamResponse>> getTeams(Pageable pageable) {
+    return null;
+  }
+}

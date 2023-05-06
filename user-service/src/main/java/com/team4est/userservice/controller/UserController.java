@@ -15,4 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class TeamController {}
+public class UserController {
+
+  @PostMapping
+  public ResponseEntity<UserResponse> createUser(
+    @RequestBody UserRequest userRequest
+  ) {
+    return null;
+  }
+
+  @GetMapping
+  public ResponseEntity<Page<UserResponse>> getUsers(Pageable pageable) {
+    return null;
+  }
+}
