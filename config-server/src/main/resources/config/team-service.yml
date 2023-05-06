@@ -8,9 +8,9 @@ spring:
   config:
     import: env.properties
   application:
-    name: category-service
+    name: team-service
   data:
     mongodb:
-      uri: ${CATEGORY_SERIVCE_DB_URL}
+      uri: ${TEAM_SERIVCE_DB_URL}
 server:
   port: '0'

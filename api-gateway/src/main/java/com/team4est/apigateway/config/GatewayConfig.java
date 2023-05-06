@@ -43,6 +43,42 @@ public class GatewayConfig {
           )
           .uri("lb://auth-service")
       )
+      .route(p ->
+        p
+          .path("/api/v1/blob/**")
+          .filters(f ->
+            f
+              .removeRequestHeader("Cookie")
+              .filter(
+                authenticationFilter.apply(new AuthenticationFilter.Config())
+              )
+          )
+          .uri("lb://storage-service")
+      )
+      .route(p ->
+        p
+          .path("/api/v1/users/**")
+          .filters(f ->
+            f
+              .removeRequestHeader("Cookie")
+              .filter(
+                authenticationFilter.apply(new AuthenticationFilter.Config())
+              )
+          )
+          .uri("lb://user-service")
+      )
+      .route(p ->
+        p
+          .path("/api/v1/teams/**")
+          .filters(f ->
+            f
+              .removeRequestHeader("Cookie")
+              .filter(
+                authenticationFilter.apply(new AuthenticationFilter.Config())
+              )
+          )
+          .uri("lb://team-service")
+      )
       .build();
   }
 }

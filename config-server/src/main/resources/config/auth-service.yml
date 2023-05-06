@@ -4,10 +4,12 @@ logging:
       springframework:
         security: INFO
 spring:
+  config:
+    import: env.properties
   datasource:
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/team4est_postgres
-    password: postgres
+    username: ${AUTH_SERIVCE_DB_USERNAME}
+    url: ${AUTH_SERIVCE_DB_URL}
+    password: ${AUTH_SERIVCE_DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update

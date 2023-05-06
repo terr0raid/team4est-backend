@@ -1,8 +1,10 @@
 spring:
+  config:
+    import: env.properties
   datasource:
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/team4est_postgres
-    password: postgres
+    username: ${PROJECT_SERIVCE_DB_USERNAME}
+    url: ${PROJECT_SERIVCE_DB_URL}
+    password: ${PROJECT_SERIVCE_DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update

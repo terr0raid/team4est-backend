@@ -1,0 +1,21 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: 'true'
+spring:
+  config:
+    import: env.properties
+  application:
+    name: storage-service
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          endpoint: ${AZURE_STORAGE_ENDPOINT}
+          account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+          container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+server:
+  port: '0'

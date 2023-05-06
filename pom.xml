@@ -23,6 +23,7 @@
         <module>auth-service</module>
         <module>team-service</module>
         <module>user-service</module>
+        <module>storage-service</module>
     </modules>
 
     <properties>
