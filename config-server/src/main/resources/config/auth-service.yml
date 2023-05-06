@@ -6,12 +6,13 @@ logging:
 spring:
   datasource:
     username: postgres
-    url: jdbc:postgresql://localhost:5432/auth-service
+    url: jdbc:postgresql://localhost:5432/team4est_postgres
     password: postgres
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: auth-service
   autoconfigure:

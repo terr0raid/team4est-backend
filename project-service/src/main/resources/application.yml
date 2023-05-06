@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: project-service
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      profile: native
+      uri: http://localhost:8888

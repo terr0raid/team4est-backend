@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>3.0.6</version>
         <relativePath/>
     </parent>
     <groupId>com.team4est</groupId>
@@ -21,6 +21,8 @@
         <module>config-server</module>
         <module>project-service</module>
         <module>auth-service</module>
+        <module>team-service</module>
+        <module>user-service</module>
     </modules>
 
     <properties>

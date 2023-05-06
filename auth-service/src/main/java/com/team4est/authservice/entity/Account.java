@@ -30,17 +30,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "_users")
-public class User implements UserDetails {
+@Table(name = "_accounts")
+public class Account implements UserDetails {
 
   @Id
   @SequenceGenerator(
-    name = "user_id_seq",
-    sequenceName = "user_id_seq",
+    name = "account_id_seq",
+    sequenceName = "account_id_seq",
     allocationSize = 1
   )
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-  @Column(name = "user_id")
+  @GeneratedValue(
+    strategy = GenerationType.SEQUENCE,
+    generator = "account_id_seq"
+  )
+  @Column(name = "account_id")
   private Long id;
 
   @Column(unique = true)

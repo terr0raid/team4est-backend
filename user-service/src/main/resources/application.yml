@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: team-service
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      profile: native
+      uri: http://localhost:8888

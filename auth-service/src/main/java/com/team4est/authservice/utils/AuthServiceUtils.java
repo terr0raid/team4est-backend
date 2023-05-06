@@ -1,10 +1,10 @@
 package com.team4est.authservice.utils;
 
 import com.team4est.authservice.dto.UserRegisterRequest;
+import com.team4est.authservice.entity.Account;
 import com.team4est.authservice.entity.ERole;
 import com.team4est.authservice.entity.Role;
 import com.team4est.authservice.entity.Token;
-import com.team4est.authservice.entity.User;
 import com.team4est.authservice.exception.exceptions.BadCreadentialsException;
 import com.team4est.authservice.repository.RoleRepository;
 import com.team4est.authservice.repository.TokenRepository;
@@ -28,7 +28,11 @@ public class AuthServiceUtils {
   private final PasswordEncoder passwordEncoder;
   private final RoleRepository roleRepository;
 
-  public void saveUserToken(User user, String jwtToken, String refreshToken) {
+  public void saveUserToken(
+    Account user,
+    String jwtToken,
+    String refreshToken
+  ) {
     Date now = new Date(System.currentTimeMillis());
     Date expiresAt = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
     var token = Token
@@ -43,7 +47,7 @@ public class AuthServiceUtils {
     tokenRepository.save(token);
   }
 
-  public void revokeAllUserTokens(User user) {
+  public void revokeAllUserTokens(Account user) {
     var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
     if (validUserTokens.isEmpty()) return;
     validUserTokens.forEach(token -> {
@@ -54,10 +58,10 @@ public class AuthServiceUtils {
     tokenRepository.saveAll(validUserTokens);
   }
 
-  public User mapToUser(UserRegisterRequest request) {
+  public Account mapToUser(UserRegisterRequest request) {
     Set<Role> roles = setRoles(request.getRoles());
     Date now = new Date(System.currentTimeMillis());
-    return User
+    return Account
       .builder()
       .email(request.getEmail())
       .password(passwordEncoder.encode(request.getPassword()))
@@ -104,9 +108,12 @@ public class AuthServiceUtils {
       .collect(Collectors.toSet());
   }
 
-  public User authenticateUser(String username, String email, String password)
-    throws BadCreadentialsException {
-    User user = userRepository
+  public Account authenticateUser(
+    String username,
+    String email,
+    String password
+  ) throws BadCreadentialsException {
+    Account user = userRepository
       .findByUsernameOrEmail(username, email)
       .orElseThrow(() ->
         new BadCreadentialsException("Username or email is incorrect")
@@ -118,7 +125,7 @@ public class AuthServiceUtils {
     return user;
   }
 
-  public Map<String, Object> userClaims(User user) {
+  public Map<String, Object> userClaims(Account user) {
     Map<String, Object> claims = new HashMap<>();
 
     claims.put("id", user.getId());
@@ -131,8 +138,8 @@ public class AuthServiceUtils {
     return claims;
   }
 
-  public User getUserByRefreshToken(String refreshToken) {
-    User user = tokenRepository
+  public Account getUserByRefreshToken(String refreshToken) {
+    Account user = tokenRepository
       .findByRefreshToken(refreshToken)
       .map(Token::getUser)
       .orElseThrow(() -> new RuntimeException("Error: User not found."));

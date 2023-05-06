@@ -7,8 +7,8 @@ import com.team4est.authservice.dto.UserLoginRequest;
 import com.team4est.authservice.dto.UserLoginResponse;
 import com.team4est.authservice.dto.UserRegisterRequest;
 import com.team4est.authservice.dto.UserRegisterResponse;
+import com.team4est.authservice.entity.Account;
 import com.team4est.authservice.entity.EToken;
-import com.team4est.authservice.entity.User;
 import com.team4est.authservice.exception.exceptions.AlreadyExistsException;
 import com.team4est.authservice.exception.exceptions.BadCreadentialsException;
 import com.team4est.authservice.exception.exceptions.EntityNotFoundException;
@@ -26,10 +26,10 @@ public class AuthenticationService implements IAuthenticationService {
   private final JwtService jwtService;
   private final AuthServiceUtils authServiceUtils;
 
-  @Transactional
+  @Transactional(rollbackFor = AlreadyExistsException.class)
   @Override
   public UserRegisterResponse register(UserRegisterRequest request) {
-    User user = authServiceUtils.mapToUser(request);
+    Account user = authServiceUtils.mapToUser(request);
 
     if (userRepository.existsByEmail(user.getEmail())) {
       throw new AlreadyExistsException("Email already exists");
@@ -37,27 +37,23 @@ public class AuthenticationService implements IAuthenticationService {
     if (userRepository.existsByUsername(user.getUsername())) {
       throw new AlreadyExistsException("Username already exists");
     }
-    try {
-      User savedUser = userRepository.save(user);
-      String accessToken = jwtService.generateToken(
-        authServiceUtils.userClaims(savedUser),
-        user
-      );
-      String refreshToken = jwtService.generateRefreshToken();
+    Account savedUser = userRepository.save(user);
+    String accessToken = jwtService.generateToken(
+      authServiceUtils.userClaims(savedUser),
+      user
+    );
+    String refreshToken = jwtService.generateRefreshToken();
 
-      authServiceUtils.saveUserToken(savedUser, accessToken, refreshToken);
+    authServiceUtils.saveUserToken(savedUser, accessToken, refreshToken);
 
-      return UserRegisterResponse
-        .builder()
-        .accessToken(accessToken)
-        .refreshToken(refreshToken)
-        .expiresIn(3600L)
-        .expiresAt(System.currentTimeMillis() + 3600L * 1000)
-        .tokenType(EToken.BEARER.name())
-        .build();
-    } catch (Exception e) {
-      throw new BadCreadentialsException("Something went wrong");
-    }
+    return UserRegisterResponse
+      .builder()
+      .accessToken(accessToken)
+      .refreshToken(refreshToken)
+      .expiresIn(3600L)
+      .expiresAt(System.currentTimeMillis() + 3600L * 1000)
+      .tokenType(EToken.BEARER.name())
+      .build();
   }
 
   @Transactional
@@ -68,7 +64,7 @@ public class AuthenticationService implements IAuthenticationService {
       throw new BadCreadentialsException("Email or username is required");
     }
 
-    User user = authServiceUtils.authenticateUser(
+    Account user = authServiceUtils.authenticateUser(
       request.getUsername(),
       request.getEmail(),
       request.getPassword()
@@ -96,7 +92,7 @@ public class AuthenticationService implements IAuthenticationService {
   @Transactional
   @Override
   public RefreshResponse refresh(RefreshRequest request) {
-    User user = authServiceUtils.getUserByRefreshToken(request.getToken());
+    Account user = authServiceUtils.getUserByRefreshToken(request.getToken());
 
     String accessToken = jwtService.generateToken(
       authServiceUtils.userClaims(user),

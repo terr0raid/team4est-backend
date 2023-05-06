@@ -2,21 +2,22 @@ version: '3.7'
 name: team4est-docker
 
 services:
-  auth_service_postgres:
+  ## Database
+  team4est_postgres:
     image: postgres:latest
-    container_name: auth_postgres
+    container_name: team4est_postgres
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: auth-service
+      POSTGRES_DB: team4est_postgres
     ports:
       - 5432:5432
     volumes:
       - pgdbdata:/var/lib/postgresql/data
 
-  category_service_mongodb:
+  team4est_mongodb:
     image: mongo
-    container_name: category_mongodb
+    container_name: team4est_mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
@@ -26,6 +27,19 @@ services:
       - 27017:27017
     volumes:
       - mongodbdata:/var/lib/mongodb/data
+
+  ## Services
+  team4est_spotify_kafka:
+    image: spotify/kafka
+    container_name: team4est_spotify_kafka
+    ports:
+      - 9092:9092
+      - 2181:2181
+    environment:
+      ADVERTISED_HOST: localhost
+      ADVERTISED_PORT: 9092
+      CONSUMER_THREADS: 1
+      TOPICS: team4est-account, team4est-project, team4est-team, team4est-channel, team4est-message
 
 volumes:
   pgdbdata:
