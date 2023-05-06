@@ -18,10 +18,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRegisterRequest {
 
-  @Size(min = 3, max = 20)
-  @NotBlank
-  private String username;
-
   @Email
   @NotBlank
   @Size(max = 50)

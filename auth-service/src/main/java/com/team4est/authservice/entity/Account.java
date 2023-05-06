@@ -48,10 +48,6 @@ public class Account implements UserDetails {
 
   @Column(unique = true)
   @NotNull
-  private String username;
-
-  @Column(unique = true)
-  @NotNull
   private String email;
 
   @NotNull

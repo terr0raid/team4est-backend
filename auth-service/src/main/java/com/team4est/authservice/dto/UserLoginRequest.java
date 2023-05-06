@@ -16,8 +16,6 @@ public class UserLoginRequest {
   @Email
   private String email;
 
-  private String username;
-
   @NotBlank
   private String password;
 }

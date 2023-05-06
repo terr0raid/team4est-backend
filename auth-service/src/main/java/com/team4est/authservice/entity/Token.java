@@ -40,7 +40,7 @@ public class Token {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "account_id")
   private Account user;
 
   @Column(unique = true, name = "access_token", length = 700)

@@ -34,9 +34,6 @@ public class AuthenticationService implements IAuthenticationService {
     if (userRepository.existsByEmail(user.getEmail())) {
       throw new AlreadyExistsException("Email already exists");
     }
-    if (userRepository.existsByUsername(user.getUsername())) {
-      throw new AlreadyExistsException("Username already exists");
-    }
     Account savedUser = userRepository.save(user);
     String accessToken = jwtService.generateToken(
       authServiceUtils.userClaims(savedUser),
@@ -60,12 +57,11 @@ public class AuthenticationService implements IAuthenticationService {
   @Override
   public UserLoginResponse login(UserLoginRequest request)
     throws EntityNotFoundException, BadCreadentialsException {
-    if (request.getEmail() == null && request.getUsername() == null) {
-      throw new BadCreadentialsException("Email or username is required");
+    if (request.getEmail() == null) {
+      throw new BadCreadentialsException("Email is required");
     }
 
     Account user = authServiceUtils.authenticateUser(
-      request.getUsername(),
       request.getEmail(),
       request.getPassword()
     );

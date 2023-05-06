@@ -65,7 +65,6 @@ public class AuthServiceUtils {
       .builder()
       .email(request.getEmail())
       .password(passwordEncoder.encode(request.getPassword()))
-      .username(request.getUsername())
       .roles(roles)
       .createdAt(now)
       .updatedAt(now)
@@ -108,16 +107,11 @@ public class AuthServiceUtils {
       .collect(Collectors.toSet());
   }
 
-  public Account authenticateUser(
-    String username,
-    String email,
-    String password
-  ) throws BadCreadentialsException {
+  public Account authenticateUser(String email, String password)
+    throws BadCreadentialsException {
     Account user = userRepository
-      .findByUsernameOrEmail(username, email)
-      .orElseThrow(() ->
-        new BadCreadentialsException("Username or email is incorrect")
-      );
+      .findByEmail(email)
+      .orElseThrow(() -> new BadCreadentialsException("Email is incorrect"));
 
     if (
       !passwordEncoder.matches(password, user.getPassword())
@@ -129,7 +123,6 @@ public class AuthServiceUtils {
     Map<String, Object> claims = new HashMap<>();
 
     claims.put("id", user.getId());
-    claims.put("username", user.getUsername());
     claims.put("email", user.getEmail());
     claims.put(
       "roles",
