@@ -1,37 +1,57 @@
 package com.team4est.storageservice.service;
 
-import com.azure.spring.cloud.core.resource.AzureStorageBlobProtocolResolver;
 import com.team4est.storageservice.dto.ResponseDto;
+import com.team4est.storageservice.model.EContainer;
 import com.team4est.storageservice.utils.StorageUtils;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class StorageService extends StorageUtils {
+public class StorageService {
 
+  private final StorageUtils storageUtils;
   private final String profileContainer = "team4estcontainer/profiles";
   private final String fileContainer = "team4estcontainer/files";
-  private final ResourceLoader resourceLoader;
+  private final List<String> profileAllows = List.of(
+    "image/jpeg",
+    "image/png",
+    "image/gif"
+  );
 
-  // private final AzureStorageBlobProtocolResolver azureStorageBlobProtocolResolver;
-
-  public ResponseDto uploadProfile(MultipartFile file) throws IOException {
-    return uploadFile(file, resourceLoader, profileContainer);
+  public ResponseDto uploadFile(MultipartFile file, EContainer path)
+    throws IOException {
+    switch (path) {
+      case PROFILE:
+        if (
+          file.getContentType() == null ||
+          !profileAllows.contains(file.getContentType()) ||
+          file.isEmpty()
+        ) return ResponseDto
+          .builder()
+          .message("error")
+          .data("file is null or not allowed")
+          .build();
+        return storageUtils.upload(file, profileContainer);
+      default:
+        if (file.getContentType() == null || file.isEmpty()) return ResponseDto
+          .builder()
+          .message("error")
+          .data("file is null or not allowed")
+          .build();
+        return storageUtils.upload(file, fileContainer);
+    }
   }
 
-  public ResponseDto uploadFile(MultipartFile file) throws IOException {
-    return uploadFile(file, resourceLoader, fileContainer);
-  }
-
-  public ResponseDto deleteProfile(String fileName) {
-    return deleteFile(fileName, resourceLoader, profileContainer);
-  }
-
-  public ResponseDto deleteFile(String fileName) {
-    return deleteFile(fileName, resourceLoader, fileContainer);
+  public ResponseDto deleteFile(String fileName, EContainer path) {
+    switch (path) {
+      case PROFILE:
+        return storageUtils.deleteFile(fileName, profileContainer);
+      default:
+        return storageUtils.deleteFile(fileName, fileContainer);
+    }
   }
 }

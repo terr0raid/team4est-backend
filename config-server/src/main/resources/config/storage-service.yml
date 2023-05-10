@@ -17,5 +17,9 @@ spring:
           endpoint: ${AZURE_STORAGE_ENDPOINT}
           account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
           container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+
 server:
   port: '0'

@@ -1,15 +1,13 @@
 package com.team4est.storageservice.controller;
 
 import com.team4est.storageservice.dto.ResponseDto;
+import com.team4est.storageservice.model.EContainer;
 import com.team4est.storageservice.service.StorageService;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,31 +20,19 @@ public class StorageController {
 
   private final StorageService storageService;
 
-  @PostMapping("/upload-profile")
+  @PostMapping
   public ResponseEntity<ResponseDto> uploadProfile(
-    @RequestParam("file") MultipartFile file
+    @RequestParam("file") MultipartFile file,
+    @RequestParam("path") EContainer path
   ) throws IOException {
-    return ResponseEntity.ok(storageService.uploadProfile(file));
+    return ResponseEntity.ok(storageService.uploadFile(file, path));
   }
 
-  @PostMapping("/upload-file")
-  public ResponseEntity<ResponseDto> uploadFile(
-    @RequestParam("file") MultipartFile file
-  ) throws IOException {
-    return ResponseEntity.ok(storageService.uploadFile(file));
-  }
-
-  @DeleteMapping("/delete-profile")
+  @DeleteMapping
   public ResponseEntity<ResponseDto> deleteProfile(
-    @RequestParam("fileName") String fileName
+    @RequestParam("fileName") String fileName,
+    @RequestParam("path") EContainer path
   ) {
-    return ResponseEntity.ok(storageService.deleteProfile(fileName));
-  }
-
-  @DeleteMapping("/delete-file")
-  public ResponseEntity<ResponseDto> deleteFile(
-    @RequestParam("fileName") String fileName
-  ) {
-    return ResponseEntity.ok(storageService.deleteFile(fileName));
+    return ResponseEntity.ok(storageService.deleteFile(fileName, path));
   }
 }

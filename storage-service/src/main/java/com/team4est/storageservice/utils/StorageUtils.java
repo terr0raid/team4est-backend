@@ -1,64 +1,72 @@
 package com.team4est.storageservice.utils;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
 import com.team4est.storageservice.dto.ResponseDto;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.UUID;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.WritableResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Component
 public class StorageUtils {
 
-  private final String blobPattern = "azure-blob://%s/%s";
+  @Autowired
+  BlobContainerClient blobContainerClient;
 
-  public ResponseDto uploadFile(
-    MultipartFile file,
-    ResourceLoader resourceLoader,
-    String containerName
-  ) throws IOException {
-    Resource resource = resourceLoader.getResource(
-      String.format(
-        blobPattern,
-        containerName,
-        UUID.randomUUID().toString() + ".jpg"
-      )
-    );
-    try (OutputStream os = ((WritableResource) resource).getOutputStream()) {
-      os.write(file.getBytes());
+  public ResponseDto upload(MultipartFile file, String path)
+    throws IOException {
+    if (file == null || file.isEmpty() || file.getBytes().length == 0) {
+      return ResponseDto
+        .builder()
+        .message("error")
+        .data("file is null")
+        .build();
     }
+    BlobClient blob = blobContainerClient.getBlobClient(
+      path + "/" + UUID.randomUUID().toString() + ".jpg"
+    );
+    blob.upload(file.getInputStream(), file.getSize(), true);
+
     return ResponseDto
       .builder()
       .message("success")
-      .data(resource.getURL().toString())
+      .data(blob.getBlobUrl())
       .build();
   }
 
-  public ResponseDto deleteFile(
-    String fileName,
-    ResourceLoader resourceLoader,
-    String fileContainer
-  ) {
-    Resource resource = resourceLoader.getResource(
-      String.format(blobPattern, fileContainer, fileName)
+  public byte[] getFile(String fileName, String path)
+    throws URISyntaxException {
+    BlobClient blob = blobContainerClient.getBlobClient(
+      pathConcat(path, fileName)
     );
-    if (resource.exists()) {
-      try (OutputStream os = ((WritableResource) resource).getOutputStream()) {
-        os.write(new byte[0]);
-        return ResponseDto.builder().message("success").build();
-      } catch (IOException e) {
-        return ResponseDto
-          .builder()
-          .message("error")
-          .data("something went wrong")
-          .build();
-      }
-    }
-    return ResponseDto
-      .builder()
-      .message("error")
-      .data("file not found")
-      .build();
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    blob.downloadStream(outputStream);
+    final byte[] bytes = outputStream.toByteArray();
+    return bytes;
+  }
+
+  // public List<String> listBlobs(String path) {
+  //   PagedIterable<BlobItem> items = blobContainerClient.listBlobs();
+  //   List<String> names = new ArrayList<String>();
+  //   for (BlobItem item : items) {
+  //     names.add(item.getName());
+  //   }
+  //   return names;
+  // }
+
+  public ResponseDto deleteFile(String fileName, String path) {
+    BlobClient blob = blobContainerClient.getBlobClient(
+      pathConcat(path, fileName)
+    );
+    blob.delete();
+    return ResponseDto.builder().message("success").build();
+  }
+
+  private String pathConcat(String path, String fileName) {
+    return path + "/" + fileName;
   }
 }
