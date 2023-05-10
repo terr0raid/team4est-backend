@@ -41,7 +41,7 @@ public class Token {
 
   @ManyToOne
   @JoinColumn(name = "account_id")
-  private Account user;
+  private Account account;
 
   @Column(unique = true, name = "access_token", length = 700)
   private String accessToken;

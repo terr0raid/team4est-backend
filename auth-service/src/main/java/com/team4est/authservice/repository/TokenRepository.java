@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 public interface TokenRepository extends JpaRepository<Token, Long> {
   @Query(
     value = """
-    select t from Token t inner join User u\s
-    on t.user.id = u.id\s
-    where u.id = :id and (t.expired = false or t.revoked = false)\s
+    select t from Token t inner join Account a\s
+    on t.account.id = a.id\s
+    where a.id = :id and (t.expired = false or t.revoked = false)\s
     """
   )
-  List<Token> findAllValidTokenByUser(Long id);
+  List<Token> findAllValidTokenByAccount(Long id);
 
   Optional<Token> findByAccessToken(String accessToken);
   Optional<Token> findByRefreshToken(String refreshToken);

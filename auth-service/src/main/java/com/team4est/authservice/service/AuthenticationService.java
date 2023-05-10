@@ -9,9 +9,11 @@ import com.team4est.authservice.dto.UserRegisterRequest;
 import com.team4est.authservice.dto.UserRegisterResponse;
 import com.team4est.authservice.entity.Account;
 import com.team4est.authservice.entity.EToken;
+import com.team4est.authservice.events.AccountCreatedEvent;
 import com.team4est.authservice.exception.exceptions.AlreadyExistsException;
 import com.team4est.authservice.exception.exceptions.BadCreadentialsException;
 import com.team4est.authservice.exception.exceptions.EntityNotFoundException;
+import com.team4est.authservice.producer.ProducerService;
 import com.team4est.authservice.repository.UserRepository;
 import com.team4est.authservice.utils.AuthServiceUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class AuthenticationService implements IAuthenticationService {
   private final UserRepository userRepository;
   private final JwtService jwtService;
   private final AuthServiceUtils authServiceUtils;
+  private final ProducerService producerService;
 
   @Transactional(rollbackFor = AlreadyExistsException.class)
   @Override
@@ -42,6 +45,18 @@ public class AuthenticationService implements IAuthenticationService {
     String refreshToken = jwtService.generateRefreshToken();
 
     authServiceUtils.saveUserToken(savedUser, accessToken, refreshToken);
+    try {
+      producerService.send(
+        "account-created",
+        AccountCreatedEvent
+          .builder()
+          .id(savedUser.getId().toString())
+          .email(savedUser.getEmail())
+          .build()
+      );
+    } catch (Exception e) {
+      throw new AlreadyExistsException(e.toString());
+    }
 
     return UserRegisterResponse
       .builder()

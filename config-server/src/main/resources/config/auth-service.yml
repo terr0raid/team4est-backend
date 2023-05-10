@@ -19,6 +19,14 @@ spring:
     name: auth-service
   autoconfigure:
     exclude[0]: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    template:
+      default-topic: ${KAFKA_TOPIC}
+    producer:
+      properties:
+        spring.json.type.mapping: event:com.team4est.authservice.events.AccountCreatedEvent
 eureka:
   client:
     service-url:
@@ -26,4 +34,4 @@ eureka:
   instance:
     prefer-ip-address: 'true'
 server:
-  port: '0'
+  port: 8083

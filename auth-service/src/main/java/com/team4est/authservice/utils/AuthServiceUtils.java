@@ -37,7 +37,7 @@ public class AuthServiceUtils {
     Date expiresAt = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
     var token = Token
       .builder()
-      .user(user)
+      .account(user)
       .accessToken(jwtToken)
       .refreshToken(refreshToken)
       .createdAt(now)
@@ -48,7 +48,9 @@ public class AuthServiceUtils {
   }
 
   public void revokeAllUserTokens(Account user) {
-    var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+    var validUserTokens = tokenRepository.findAllValidTokenByAccount(
+      user.getId()
+    );
     if (validUserTokens.isEmpty()) return;
     validUserTokens.forEach(token -> {
       token.setExpired(true);
@@ -134,7 +136,7 @@ public class AuthServiceUtils {
   public Account getUserByRefreshToken(String refreshToken) {
     Account user = tokenRepository
       .findByRefreshToken(refreshToken)
-      .map(Token::getUser)
+      .map(Token::getAccount)
       .orElseThrow(() -> new RuntimeException("Error: User not found."));
 
     return user;

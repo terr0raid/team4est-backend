@@ -12,5 +12,14 @@ spring:
   data:
     mongodb:
       uri: ${USER_SERIVCE_DB_URL}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    template:
+      default-topic: ${KAFKA_TOPIC}
+    consumer:
+      properties:
+        spring.json.type.mapping: event:com.team4est.*-.events.AccountCreatedEvent
+        spring.json.trusted.packages: com.team4est.*-.events.*
 server:
   port: '0'
