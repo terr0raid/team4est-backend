@@ -1,11 +1,13 @@
 package com.team4est.userservice;
 
-import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team4est.userservice.entity.User;
 import com.team4est.userservice.events.AccountCreatedEvent;
 import com.team4est.userservice.repository.UserRepository;
 import java.util.Date;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.boot.SpringApplication;
@@ -26,22 +28,27 @@ public class UserServiceApplication {
   }
 
   @KafkaListener(topics = "account-created", groupId = "account")
-  public void handleAccountCreatedEvent(ConsumerRecord<String, Object> event) {
-    mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-
-    AccountCreatedEvent account = mapper.convertValue(
+  public void handleAccountCreatedEvent(ConsumerRecord<String, String> event)
+    throws JsonMappingException, JsonProcessingException {
+    AccountCreatedEvent account = mapper.readValue(
       event.value(),
       AccountCreatedEvent.class
     );
+
+    UUID uuid = UUID.randomUUID();
+    String randomUsername = uuid.toString().split("-")[0];
 
     User user = User
       .builder()
       .id(account.getId())
       .email(account.getEmail())
+      .username(randomUsername)
       .bio("")
-      .birthdate(new Date(System.currentTimeMillis()))
+      .birthdate(new Date(System.currentTimeMillis()).toString())
       .phone("")
-      .profile("")
+      .profile(
+        "https://team4est.blob.core.windows.net/team4estcontainer/profiles/default-profile.jpg"
+      )
       .updatedAt(new Date(System.currentTimeMillis()))
       .createdAt(new Date(System.currentTimeMillis()))
       .build();

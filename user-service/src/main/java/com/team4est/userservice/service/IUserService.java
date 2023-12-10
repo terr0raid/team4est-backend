@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IUserService {
-  UserResponse createProject(UserRequest project);
-  Page<UserResponse> getProjects(Pageable pageable);
+  UserResponse createUser(UserRequest project);
+  Page<UserResponse> getUsers(Pageable pageable);
+  UserResponse getUser(String userSearchRequest);
+  UserResponse updateUser(UserRequest userRequest);
 }

@@ -12,6 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
@@ -48,6 +49,7 @@ public class Account implements UserDetails {
 
   @Column(unique = true)
   @NotNull
+  @Email
   private String email;
 
   @NotNull

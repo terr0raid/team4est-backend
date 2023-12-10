@@ -12,11 +12,10 @@ public class UserResponse {
 
   private String username;
   private String email;
+  private String name;
+  private String lastName;
   private String profile;
   private String phone;
-  private Date birthdate;
+  private String birthdate;
   private String bio;
-
-  private Date createdAt;
-  private Date updatedAt;
 }

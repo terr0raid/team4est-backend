@@ -1,8 +1,8 @@
 package com.team4est.storageservice.model;
 
 public enum EContainer {
-  PROFILE("team4estcontainer/profiles"),
-  FILE("team4estcontainer/files");
+  PROFILE("profiles"),
+  FILE("files");
 
   private final String containerName;
 

@@ -33,5 +33,10 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: 'true'
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+
 server:
-  port: 8083
+  port: 0

@@ -2,6 +2,7 @@ package com.team4est.storageservice.utils;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.team4est.storageservice.dto.ResponseDto;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,18 +20,17 @@ public class StorageUtils {
 
   public ResponseDto upload(MultipartFile file, String path)
     throws IOException {
-    if (file == null || file.isEmpty() || file.getBytes().length == 0) {
-      return ResponseDto
-        .builder()
-        .message("error")
-        .data("file is null")
-        .build();
-    }
     BlobClient blob = blobContainerClient.getBlobClient(
-      path + "/" + UUID.randomUUID().toString() + ".jpg"
+      path +
+      "/" +
+      UUID.randomUUID().toString() +
+      getFileExtension(file.getOriginalFilename())
     );
-    blob.upload(file.getInputStream(), file.getSize(), true);
 
+    blob.upload(file.getInputStream(), file.getSize(), true);
+    BlobHttpHeaders headers = new BlobHttpHeaders();
+    headers.setContentType(file.getContentType());
+    blob.setHttpHeaders(headers);
     return ResponseDto
       .builder()
       .message("success")
@@ -68,5 +68,9 @@ public class StorageUtils {
 
   private String pathConcat(String path, String fileName) {
     return path + "/" + fileName;
+  }
+
+  private String getFileExtension(String fileName) {
+    return fileName.substring(fileName.lastIndexOf("."), fileName.length());
   }
 }

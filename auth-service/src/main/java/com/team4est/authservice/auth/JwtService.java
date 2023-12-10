@@ -3,7 +3,6 @@ package com.team4est.authservice.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
@@ -11,16 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
 
-  private final String SECRET_KEY =
-    "36763979244226452948404D635166546A576E5A7134743777217A25432A462D";
+  @Value("${app.jwt.secret}")
+  private String SECRET_KEY;
 
-  private int expDate = 1000 * 64 * 24 * 5;
+  private int expDate = 1000 * 60 * 60 * 10;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -80,7 +80,7 @@ public class JwtService {
   }
 
   private Key getSignInKey() {
-    byte[] apiKeySecretBytes = Decoders.BASE64.decode(SECRET_KEY);
+    byte[] apiKeySecretBytes = SECRET_KEY.getBytes();
     return Keys.hmacShaKeyFor(apiKeySecretBytes);
   }
 }

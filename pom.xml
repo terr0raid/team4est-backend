@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
+        <version>3.0.7</version>
         <relativePath/>
     </parent>
     <groupId>com.team4est</groupId>
@@ -58,6 +58,11 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <optional>true</optional>
             </dependency>
         </dependencies>
     </dependencyManagement>

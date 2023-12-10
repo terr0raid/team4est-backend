@@ -8,12 +8,28 @@ server:
   port: '8080'
 
 spring:
+  config:
+    import: env.properties
   application:
     name: api-gateway
   main:
     allow-bean-definition-overriding: 'true'
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: '*'
+            allowed-methods: '*'
+            allowed-headers: '*'
+            allow-credentials: true
+
       discovery:
         locator:
           lower-case-service-id: 'true'
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}

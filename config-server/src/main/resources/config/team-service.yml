@@ -13,4 +13,4 @@ spring:
     mongodb:
       uri: ${TEAM_SERIVCE_DB_URL}
 server:
-  port: '0'
+  port: 0

@@ -2,17 +2,17 @@ package com.team4est.apigateway.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
-  private String SECRET_KEY =
-    "36763979244226452948404D635166546A576E5A7134743777217A25432A462D";
+  @Value("${app.jwt.secret}")
+  private String SECRET_KEY;
 
   public Claims getAllClaimsFromToken(String token) {
     try {
@@ -37,7 +37,7 @@ public class JwtUtil {
   }
 
   private Key getSignInKey() {
-    byte[] apiKeySecretBytes = Decoders.BASE64.decode(SECRET_KEY);
+    byte[] apiKeySecretBytes = SECRET_KEY.getBytes();
     return Keys.hmacShaKeyFor(apiKeySecretBytes);
   }
 }

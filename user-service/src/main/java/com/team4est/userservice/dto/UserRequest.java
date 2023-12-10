@@ -8,10 +8,13 @@ import lombok.Data;
 @Builder
 public class UserRequest {
 
+  private String id;
   private String username;
   private String email;
+  private String name;
+  private String lastName;
   private String profile;
   private String phone;
-  private Date birthdate;
+  private String birthdate;
   private String bio;
 }

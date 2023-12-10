@@ -22,4 +22,4 @@ spring:
         spring.json.type.mapping: event:com.team4est.*-.events.AccountCreatedEvent
         spring.json.trusted.packages: com.team4est.*-.events.*
 server:
-  port: '0'
+  port: 0

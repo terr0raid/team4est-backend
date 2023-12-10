@@ -20,12 +20,20 @@ public class StorageController {
 
   private final StorageService storageService;
 
-  @PostMapping
-  public ResponseEntity<ResponseDto> uploadProfile(
-    @RequestParam("file") MultipartFile file,
-    @RequestParam("path") EContainer path
+  @PostMapping("/file")
+  public ResponseEntity<ResponseDto> uploadFile(
+    @RequestParam("file") MultipartFile file
   ) throws IOException {
-    return ResponseEntity.ok(storageService.uploadFile(file, path));
+    return ResponseEntity.ok(storageService.uploadFile(file, EContainer.FILE));
+  }
+
+  @PostMapping("/profile")
+  public ResponseEntity<ResponseDto> uploadProfile(
+    @RequestParam("file") MultipartFile file
+  ) throws IOException {
+    return ResponseEntity.ok(
+      storageService.uploadFile(file, EContainer.PROFILE)
+    );
   }
 
   @DeleteMapping
